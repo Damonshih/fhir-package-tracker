@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫療包裹追蹤系統 (FHIR)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
+        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-search { background-color: #3498db; color: white; }
+        .btn-search:hover { background-color: #2980b9; }
+        .btn-upload { background-color: #27ae60; color: white; }
+        .btn-upload:hover { background-color: #219150; }
+        #result-area { margin-top: 20px; }
+        .log-item { background: #ecf0f1; padding: 15px; margin-bottom: 10px; border-left: 5px solid #3498db; border-radius: 4px; }
+        .log-time { color: #7f8c8d; font-size: 0.9em; margin-bottom: 5px; }
+        .log-status { font-weight: bold; color: #2c3e50; }
+        .loading { text-align: center; color: #7f8c8d; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📦 醫療包裹追蹤系統</h1>
+    <p style="text-align: center; color: #666;">連接 HAPI FHIR Public Server</p>
+
+    <!-- 查詢區塊 -->
+    <div class="input-group">
+        <input type="text" id="trackId" placeholder="請輸入包裹編號 (例如: PKG-8888)" value="PKG-8888">
+        <button class="btn-search" onclick="searchPackage()">🔍 查詢包裹編號</button>
+    </div>
+
+    <!-- 模擬 Arduino 上傳區塊 (方便你測試用) -->
+    <div style="text-align: right; margin-bottom: 20px;">
+        <button class="btn-upload" onclick="simulateArduinoUpload()">📤 模擬 Arduino 上傳一筆資料</button>
+    </div>
+
+    <div id="loading" class="loading">資料讀取中...</div>
+    <div id="result-area"></div>
+</div>
+
+<script>
+    // 設定 FHIR Server 網址
+    const FHIR_BASE_URL = "https://hapi.fhir.org/baseR4";
+
+    // 1. 查詢功能 (GET)
+    async function searchPackage() {
+        const id = document.getElementById('trackId').value;
+        if(!id) return alert("請輸入包裹編號！");
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('result-area').innerHTML = '';
+
+        try {
+            // 向 FHIR Server 查詢 identifier 等於輸入編號的 SupplyDelivery 資源
+            const response = await fetch(`${FHIR_BASE_URL}/SupplyDelivery?identifier=${id}&_sort=-_lastUpdated`);
+            const data = await response.json();
+
+            document.getElementById('loading').style.display = 'none';
+
+            if (!data.entry || data.entry.length === 0) {
+                document.getElementById('result-area').innerHTML = '<p style="text-align:center">查無此包裹資料，請先模擬上傳。</p>';
+                return;
+            }
+
+            // 顯示每一筆物流紀錄
+            data.entry.forEach(item => {
+                const resource = item.resource;
+                // 修改後的程式碼：優先讀取 occurrenceDateTime，如果沒有，就讀取 meta.lastUpdated (伺服器收到的時間)
+                let displayTime = "時間未紀錄";
+                if (resource.occurrenceDateTime) 
+                {
+                    displayTime = new Date(resource.occurrenceDateTime).toLocaleString();
+                } 
+                else if (resource.meta && resource.meta.lastUpdated) 
+                {
+                    displayTime = new Date(resource.meta.lastUpdated).toLocaleString() + " (接收時間)";
+                }
+
+                const time = displayTime;
+                const location = resource.destination ? resource.destination.display : "未知地點";
+                const status = resource.status || "未知狀態";
+
+                const html = `
+                    <div class="log-item">
+                        <div class="log-time">${time}</div>
+                        <div class="log-status">📍 地點：${location}</div>
+                        <div>狀態：${status}</div>
+                        <div style="font-size:0.8em; color:#999;">Resource ID: ${resource.id}</div>
+                    </div>
+                `;
+                document.getElementById('result-area').innerHTML += html;
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert("查詢失敗，請檢查網路或 Console");
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    // 2. 模擬上傳功能 (POST) - 這段邏輯之後要寫在 Arduino 裡
+    async function simulateArduinoUpload() {
+        const id = document.getElementById('trackId').value;
+        const now = new Date().toISOString(); // 取得現在時間
+
+        // 建立符合 FHIR 標準的 JSON 資料
+        const fhirData = {
+            "resourceType": "SupplyDelivery",
+            "status": "completed",
+            "identifier": [
+                {
+                    "system": "http://my-hospital.org/tracking-id",
+                    "value": id
+                }
+            ],
+            "occurrenceDateTime": now,
+            "destination": {
+                "display": "Arduino Station (Web Test)"
+            }
+        };
+
+        try {
+            const response = await fetch(`${FHIR_BASE_URL}/SupplyDelivery`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json+fhir"
+                },
+                body: JSON.stringify(fhirData)
+            });
+
+            if(response.ok) {
+                alert(`✅ 成功上傳一筆 ${id} 的紀錄！\n現在請點擊「查詢包裹編號」來查看。`);
+                searchPackage(); // 上傳完自動重整
+            } else {
+                alert("上傳失敗");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("上傳發生錯誤");
+        }
+    }
+</script>
+
+</body>
+</html>
