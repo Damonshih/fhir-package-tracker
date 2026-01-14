@@ -67,7 +67,7 @@
 ---
 
 ## 🔗 Demo 連結與資源
-- **線上展示 (GitHub Pages)**: [點擊這裡開啟系統網頁]([https://your-username.github.io/your-repo-name](https://damonshih.github.io/fhir-package-tracker/))
+- **線上展示 (GitHub Pages)**: [點擊這裡開啟系統網頁](https://damonshih.github.io/fhir-package-tracker/)
 - **專案原始碼**: [GitHub Repository 連結](https://github.com/your-username/your-repo-name)
 - **HAPI FHIR Server**: [http://hapi.fhir.org/baseR4](http://hapi.fhir.org/baseR4)
 
