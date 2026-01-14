@@ -66,14 +66,23 @@
 
 ---
 
-## 🔗 Demo 連結與資源 
-[![HackMD](https://img.shields.io/badge/HackMD-競賽專題文件-blue?logo=hackmd)](https://hackmd.io/@8SqntYZfROaRXjgqLSj8Dg/SJ5VZqLfWl)
-[![HackMD](https://img.shields.io/badge/HackMD-競賽專題討論-blue?logo=hackmd)](https://hackmd.io/@8SqntYZfROaRXjgqLSj8Dg/BydT5c8zWx)
-[![HackMD](https://img.shields.io/badge/HackMD-競賽專題開發日誌-blue?logo=hackmd)](https://hackmd.io/@8SqntYZfROaRXjgqLSj8Dg/SJS1oncZZx)
+## 🔗 Demo 連結與資源
+- **線上展示 (GitHub Pages)**: [點擊這裡開啟系統網頁](https://your-username.github.io/your-repo-name)
+- **專案原始碼**: [GitHub Repository 連結](https://github.com/your-username/your-repo-name)
+- **HAPI FHIR Server**: [http://hapi.fhir.org/baseR4](http://hapi.fhir.org/baseR4)
 
 ---
 
 ## 👨‍💻 作者 (Author)
-**慈濟大學 醫學資訊學系 - 哈哈組**
+**慈濟大學 醫學資訊學系 - 第一組**
 - 負責項目：Arduino 韌體開發、FHIR 資料串接、硬體整合
 - 聯絡方式：[114106107@gms.tcu.edu.tw]
+
+---
+*Last Updated: 2026-01-14*
+
+
+[![HackMD](https://img.shields.io/badge/HackMD-競賽專題文件-blue?logo=hackmd)](https://hackmd.io/@8SqntYZfROaRXjgqLSj8Dg/SJ5VZqLfWl)
+[![HackMD](https://img.shields.io/badge/HackMD-競賽專題討論-blue?logo=hackmd)](https://hackmd.io/@8SqntYZfROaRXjgqLSj8Dg/BydT5c8zWx)
+[![HackMD](https://img.shields.io/badge/HackMD-競賽專題開發日誌-blue?logo=hackmd)](https://hackmd.io/@8SqntYZfROaRXjgqLSj8Dg/SJS1oncZZx)
+
