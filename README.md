@@ -1,4 +1,3 @@
-```markdown
 # 🏥 基於 Arduino UNO R4 WiFi 之醫療包裹 FHIR 追蹤系統
 > **2025 大健康產業創新創業競賽 - 決賽作品**
 
@@ -42,7 +41,6 @@
   },
   "valueString": "Station A"
 }
-```
 
 ---
 
